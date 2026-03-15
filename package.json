@@ -4,7 +4,7 @@
     "eslint": "eslint . --color --max-warnings=0",
     "oxlint": "oxlint .",
     "build": "node build.ts",
-    "server": "node dist/index.js",
+    "test": "node dist/test.js",
     "tsc": "tsc"
   },
   "scriptsmon":{
@@ -14,7 +14,7 @@
     "eslint":["$tsc","eslint.config.mjs"],
     "build":["$basic","build.ts"],
     "oxlint":["$basic",".oxlintrc.json"],
-    "server":["dist/index.js"]
+    "test":["dist/test.js"]
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.7",
