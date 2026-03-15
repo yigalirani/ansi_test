@@ -1,0 +1,36 @@
+{
+  "scripts": {
+    "biome": "biome lint",
+    "eslint": "eslint . --color --max-warnings=0",
+    "oxlint": "oxlint .",
+    "build": "node build.ts",
+    "server": "node dist/index.js",
+    "tsc": "tsc"
+  },
+  "scriptsmon":{
+    "basic":["package.json","src"],
+    "biome":["$basic","biome.json"],
+    "tsc":["$basic","tsconfig.json"],
+    "eslint":["$tsc","eslint.config.mjs"],
+    "build":["$basic","build.ts"],
+    "oxlint":["$basic",".oxlintrc.json"],
+    "server":["dist/index.js"]
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.4.7",
+    "@eslint/css": "1.0.0",
+    "@eslint/js": "^9",
+    "@types/node": "25.5.0",
+    "esbuild": "0.27.4",
+    "eslint": "^10",
+    "eslint-formatter-visualstudio": "9.0.1",
+    "eslint-import-resolver-typescript": "4.4.4",
+    "eslint-plugin-import-x": "4.16.2",
+    "globals": "17.4.0",
+    "oxlint": "1.55.0",
+    "oxlint-tsgolint": "0.16.0",
+    "type-fest": "5.4.4",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.57.0"  
+  }
+}
