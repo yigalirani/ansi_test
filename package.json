@@ -7,14 +7,34 @@
     "test": "node dist/test.js",
     "tsc": "tsc"
   },
-  "scriptsmon":{
-    "basic":["package.json","src"],
-    "biome":["$basic","biome.json"],
-    "tsc":["$basic","tsconfig.json"],
-    "eslint":["$tsc","eslint.config.mjs"],
-    "build":["$basic","build.ts"],
-    "oxlint":["$basic",".oxlintrc.json"],
-    "test":["dist/test.js"]
+  "scriptsmon": {
+    "basic": [
+      "package.json",
+      "src"
+    ],
+    "biome": [
+      "$basic",
+      "biome.json"
+    ],
+    "tsc": [
+      "$basic",
+      "tsconfig.json"
+    ],
+    "eslint": [
+      "$tsc",
+      "eslint.config.mjs"
+    ],
+    "build": [
+      "$basic",
+      "build.ts"
+    ],
+    "oxlint": [
+      "$basic",
+      ".oxlintrc.json"
+    ],
+    "test": [
+      "dist/test.js"
+    ]
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.7",
@@ -31,6 +51,9 @@
     "oxlint-tsgolint": "0.16.0",
     "type-fest": "5.4.4",
     "typescript": "5.9.3",
-    "typescript-eslint": "8.57.0"  
+    "typescript-eslint": "8.57.0"
+  },
+  "dependencies": {
+    "ansi-regex": "^6.2.2"
   }
 }

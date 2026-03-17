@@ -1,4 +1,8 @@
-type font_style = 'normal' | 'bold' | 'italic' | 'underline' | 'blinking' | 'inverse' | 'strikethrough';
+import ansiRegex from 'ansi-regex';
+const ansi_regex=ansiRegex()
+
+console.log(ansi_regex)
+type font_style =  'bold' | 'italic' | 'underline' | 'blinking' | 'inverse' | 'strikethrough';
 
 export interface Style {
   foreground: string | undefined;
@@ -40,7 +44,7 @@ function get8BitColor(n: number): string {
 function cloneStyle(style: Style): Style {
   // Requirement: if all font styles are normal, don't report 'normal'
   const styles = new Set(style.font_styles);
-  styles.delete('normal'); 
+
 
   return {
     foreground: style.foreground,
@@ -50,6 +54,7 @@ function cloneStyle(style: Style): Style {
 }
 
 function applySGRCode(params: number[], style: Style): void {
+  //todo goto and verify that correct https://stackoverflow.com/questions/4842424/list-of-ansi-color-escape-sequences
   let i = 0;
   while (i < params.length) {
     const code = params[i];
@@ -58,7 +63,6 @@ function applySGRCode(params: number[], style: Style): void {
       style.foreground = undefined;
       style.background = undefined;
       style.font_styles.clear();
-      style.font_styles.add('normal');
       i++;
       continue;
     }
@@ -107,22 +111,22 @@ export function strip_ansi(text: string, start_style: Style): {
   style_positions: Array<StylePosition>
 } {
   const style_positions: Array<StylePosition> = [];
-  let stripped_text = "";
+  const strings=[]
   const current_style = { ...start_style, font_styles: new Set(start_style.font_styles) };
 
-  // Regex matches ALL ANSI sequences (CSI, OSC, etc.)
-  const ansi_regex = /[\u001b\u009b](?:\[[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-ORZcf-nqry=><]|\][^\x07\x1b]*[\x07\x1b\\]|[@-_][0-?]*[ -/]*[@-~])/g;
-
   let last_index = 0;
-  let match: RegExpExecArray | null;
+  let position=0
 
-  while ((match = ansi_regex.exec(text)) !== null) {
+  for (const match of text.matchAll(ansi_regex)){
     // 1. Accumulate plain text
-    stripped_text += text.slice(last_index, match.index);
-    last_index = ansi_regex.lastIndex;
+    const {index}=match
+    const skip_str=text.slice(last_index, index)
+    position+=skip_str.length
+    strings.push(skip_str)
+    
 
     const sequence = match[0];
-
+    last_index = index+sequence.length
     // 2. Filter for SGR only (ESC [ ... m)
     if (!sequence.startsWith('\x1b[') || !sequence.endsWith('m')) {
       continue;
@@ -133,16 +137,14 @@ export function strip_ansi(text: string, start_style: Style): {
     applySGRCode(params, current_style);
 
     // 4. Capture state
-    style_positions.push({
-      ...cloneStyle(current_style),
-      position: stripped_text.length
-    });
+    const cloned={...cloneStyle(current_style),position}
+    if (style_positions.at(-1)?.position==position)
+      style_positions.splice(-1,1,cloned)
+    else
+      style_positions.push(cloned)
   }
-
-  stripped_text += text.slice(last_index);
-
   return {
-    stripped_text,
+    stripped_text:strings.join(''),
     style_positions
   };
 }
